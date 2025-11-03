@@ -15,7 +15,8 @@ var port = process.env.PORT || 3000;
 
 // Connect to a MongoDB --> Uncomment this once you have a connection string!!
 mongoose.set('strictQuery', false);
-mongoose.connect(process.env.MONGODB_URI,  { useNewUrlParser: true});
+mongoose.connect(process.env.MONGODB_URI);
+// mongoose.connect(process.env.MONGODB_URI,  { useNewUrlParser: true});
 
 // Allow CORS so that backend and frontend could be put on different servers
 var allowCrossDomain = function (req, res, next) {
