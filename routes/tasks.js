@@ -70,6 +70,8 @@ module.exports = function (router) {
             var selectP = parseJSONParam(req.query.select, 'select', res);
             if (!selectP.ok) return;
 
+            var hasSkipParam = (req.query.skip !== undefined);
+            var hasLimitParam = (req.query.limit !== undefined);
             var skip = req.query.skip ? parseInt(req.query.skip, 10) : 0;
             if (Number.isNaN(skip) || skip < 0) skip = 0;
             var limit = req.query.limit !== undefined ? parseInt(req.query.limit, 10) : 100; 
@@ -80,9 +82,9 @@ module.exports = function (router) {
                 if (!validateWhereIdsForResource(whereP.value, res, 'task')) return;
                 if (count) {
                     var total = await Task.countDocuments(whereP.value || {}).exec();
-                    if (skip || limit !== undefined) {
-                        var afterSkip = Math.max(total - (skip || 0), 0);
-                        var pageCount = (limit !== undefined) ? Math.min(afterSkip, limit) : afterSkip;
+                    if (hasSkipParam || hasLimitParam) {
+                        var afterSkip = Math.max(total - (hasSkipParam ? skip : 0), 0);
+                        var pageCount = hasLimitParam ? Math.min(afterSkip, limit) : afterSkip;
                         return res.status(200).json({ message: 'Tasks count retrieved successfully', data: pageCount });
                     }
                     return res.status(200).json({ message: 'Tasks count retrieved successfully', data: total });
